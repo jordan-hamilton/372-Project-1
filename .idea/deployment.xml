@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="hamiltj2@access.engr.oregonstate.edu:22">
+  <component name="PublishConfigData" autoUpload="Always" serverName="Flip" exclude=".svn;.cvs;.idea;.DS_Store;.git;.hg;*.hprof;*.pyc;*.gitignore">
     <serverData>
-      <paths name="hamiltj2@access.engr.oregonstate.edu:22">
+      <paths name="Flip">
         <serverdata>
           <mappings>
-            <mapping deploy="/nfs/stak/users/hamiltj2/372/Project1" local="$PROJECT_DIR$" />
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
