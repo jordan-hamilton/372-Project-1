@@ -6,7 +6,8 @@ import sys
 
 def main():
     host = ''
-    port = int(sys.argv[1])
+    # port = int(sys.argv[1]) TODO: Use port arg in final version
+    port = 53236
 
     with socket(AF_INET, SOCK_STREAM) as sock:
         sock.bind((host, port))
