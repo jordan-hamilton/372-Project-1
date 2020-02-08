@@ -1,28 +1,50 @@
 #!/usr/bin/env python3
 
-from socket import socket, AF_INET, SOCK_STREAM
+from socket import socket, AF_INET, SHUT_RDWR, SOCK_STREAM, getfqdn
 import sys
 
 
 def main():
     host = ''
     # port = int(sys.argv[1]) # TODO: Use port arg in final version
-    port = 53236
-    handle = 'Jordan'
+    port = 53237
+    handle = 'hamiltj2> '
+    quit_cmd = '/quit'
+    end_of_message = '||'
 
     with socket(AF_INET, SOCK_STREAM) as sock:
         sock.bind((host, port))
         sock.listen(1)
+        print( 'Now listening for incoming connections on %s:%d.' % (getfqdn(), port) )
 
         while True:
             conn, addr = sock.accept()
+
             with conn:
-                print('Connected to ', addr)
-                while True:
+                quit_detected = False
+                print( 'Connected to %s:%d.' % (addr[0], addr[1]) )
+
+                while not quit_detected:
                     data = conn.recv(1024)
-                    if not data:
-                        break
-                    conn.sendall(data)
+                    print('%s' % data.decode())
+                    print('%s' % handle, end='')
+                    message = input()
+
+                    if message == quit_cmd:
+                        conn.shutdown(SHUT_RDWR)
+                        conn.close()
+                        sock.shutdown(SHUT_RDWR)
+                        sock.close()
+                        raise SystemExit(0)
+                    else:
+                        try:
+                            conn.sendall((handle + message + end_of_message).encode())
+                        except:
+                            print( '%s:%d disconnected.' % (addr[0], addr[1]) )
+                            quit_detected = True
+
+                conn.shutdown(SHUT_RDWR)
+                conn.close()
 
 
 if __name__ == "__main__":
