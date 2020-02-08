@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="26380db6-bdaa-41c3-a9a7-84cdcbcccb0b" name="Flip" url="http://access.engr.oregonstate.edu">
+        <fileTransfer host="access.engr.oregonstate.edu" port="22" privateKey="$USER_HOME$/.ssh/osu" rootFolder="/nfs/stak/users/hamiltj2/372/Project1/client" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
