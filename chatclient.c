@@ -3,15 +3,9 @@
 //
 
 #include <netdb.h>
-#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
-
-#include <ctype.h>
-#include <fcntl.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 void error(const char* msg);
@@ -84,21 +78,30 @@ int main(int argc, char* argv[]) {
 
     memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer again for reuse
     receiveStringFromSocket(&socketFD, buffer, messageFragment, &messageFragmentSize, endOfMessage);
-    fprintf(stdout, "%s\n", buffer);
+    if (strcmp(buffer, quitCmd) == 0) {
+      fprintf(stdout, "%s:%s is shutting down.\n", argv[1], argv[2]);
+      break;
+    }
+    else {
+      fprintf(stdout, "%s\n", buffer);
+    }
 
     fprintf(stdout, "%s", username);
 
     charsEntered = getline(&message, &messageSize, stdin);
     message[charsEntered - 1] = '\0';
 
-    if (strcmp(message, quitCmd) == 0) {
-      quitReceived = 1;
-    } else {
-      memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer again for reuse
+    memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer again for reuse
+
+    if (strcmp(message, quitCmd) != 0) {
       strcpy(buffer, username); // Copy the handle into the buffer
-      strcat(buffer, message);
-      sendStringToSocket(&socketFD, buffer);
+      strcat(buffer, message); // Append the message to the buffer
+    } else {
+      strcpy(buffer, message); // Copy only the message into the buffer
+      quitReceived = 1;
     }
+    sendStringToSocket(&socketFD, buffer);
+
   } while (!quitReceived);
 
   close(socketFD); // Close the socket
