@@ -6,8 +6,8 @@ import sys
 
 def main():
     host = ''
-    # port = int(sys.argv[1]) # TODO: Use port arg in final version
-    port = 53237
+    port = int(sys.argv[1])
+    server_shutdown = False
     handle = 'hamiltj2> '
     quit_cmd = '/quit'
     end_of_message = '||'
@@ -26,25 +26,47 @@ def main():
 
                 while not quit_detected:
                     data = conn.recv(1024)
+
+                    if data.decode() == quit_cmd:
+                        quit_detected = True
+                        print( 'Client %s:%d disconnected.' % (addr[0], addr[1]) )
+                        conn.shutdown(SHUT_RDWR)
+                        break
+
                     print('%s' % data.decode())
                     print('%s' % handle, end='')
                     message = input()
 
                     if message == quit_cmd:
-                        conn.shutdown(SHUT_RDWR)
-                        conn.close()
-                        sock.shutdown(SHUT_RDWR)
-                        sock.close()
-                        raise SystemExit(0)
+                        server_shutdown = True
+                        message = message + end_of_message
                     else:
-                        try:
-                            conn.sendall((handle + message + end_of_message).encode())
-                        except:
-                            print( '%s:%d disconnected.' % (addr[0], addr[1]) )
-                            quit_detected = True
+                        message = handle + message + end_of_message
 
-                conn.shutdown(SHUT_RDWR)
+                    try:
+                        conn.sendall(message.encode())
+                    except:
+                        print( 'Client %s:%d disconnected.' % (addr[0], addr[1]) )
+                        quit_detected = True
+
+                    if server_shutdown:
+                        shutdown_server(sock, conn)
+
                 conn.close()
+
+
+def shutdown_server(sock, conn):
+
+    # Close the client connection
+    conn.shutdown(SHUT_RDWR)
+    conn.close()
+
+    # Stop listening on the port the server is bound to
+    sock.shutdown(SHUT_RDWR)
+    sock.close()
+
+    # Exit the process
+    raise SystemExit(0)
 
 
 if __name__ == "__main__":
